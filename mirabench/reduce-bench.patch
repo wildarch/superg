@@ -1,0 +1,36 @@
+diff --git a/reduce.c b/reduce.c
+index 24c3241..77039a7 100644
+--- a/reduce.c
++++ b/reduce.c
+@@ -12,6 +12,7 @@
+ #include <errno.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <time.h>
+ struct stat buf;  /* used only by code for FILEMODE, FILESTAT in reduce */
+ #include "data.h"
+ #include "big.h"
+@@ -224,7 +225,22 @@ L:e= reduce(e);
+ /* ### */
+ void print(e) /* evaluate list of chars and send to s_out */
+ word e;
+-{ e= reduce(e);
++{ 
++  struct timespec start;
++  long long start_cycles = cycles;
++  clock_gettime(CLOCK_MONOTONIC, &start);
++  e= reduce(e);
++  struct timespec end;
++  long long end_cycles = cycles;
++  clock_gettime(CLOCK_MONOTONIC, &end);
++  fprintf(stdout, "Start: %lld.%.9ld\n", (long long)start.tv_sec, start.tv_nsec);
++  fprintf(stdout, "End: %lld.%.9ld\n", (long long)end.tv_sec, end.tv_nsec);
++
++  long long seconds = ((long long) end.tv_sec) - ((long long)start.tv_sec);
++  long long nanos = end.tv_nsec - start.tv_nsec + (seconds * 1000000000ll);
++  fprintf(stdout, "Nanos: %lld\n", nanos);
++  fprintf(stdout, "Cycles: %lld\n", end_cycles - start_cycles);
++
+   while(tag[e]==CONS && is_char(hd[e]=reduce(hd[e])))
+   { unsigned c=get_char(hd[e]);
+     if(UTF8)outUTF8(c,s_out); else

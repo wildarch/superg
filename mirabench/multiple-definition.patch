@@ -1,0 +1,21 @@
+--- Makefile	2020-01-31 15:52:50.000000000 +0100
++++ Makefile	2022-11-27 17:48:40.594670539 +0100
+@@ -12,6 +12,9 @@
+ CFLAGS = #-O #-DCYGWIN #-DUWIN #-DIBMRISC #-Dsparc7 #-Dsparc8
+ #be wary of using anything higher than -O as the garbage collector may fall over
+ #if using gcc rather than clang try without -O first
++# Paper over an issue where variables in a header file are included multiple times 
++# and thus defined more than once.
++LDFLAGS=-Wl,--allow-multiple-definition
+ EX = #.exe        #needed for CYGWIN, UWIN
+ YACC = byacc #Berkeley yacc, gnu yacc not compatible
+ # -Dsparc7 needed for Solaris 2.7
+@@ -20,7 +23,7 @@
+ 			    version.c miralib/.version fdate .host Makefile
+ 	$(CC) $(CFLAGS) -DVERS=`cat miralib/.version` -DVDATE="\"`./revdate`\"" \
+ 	    -DHOST="`./quotehostinfo`" version.c cmbnms.o y.tab.o data.o lex.o \
+-	    big.o reduce.o steer.o trans.o types.o utf8.o -lm -o mira
++	    big.o reduce.o steer.o trans.o types.o utf8.o -lm -o mira $(LDFLAGS)
+ 	strip mira$(EX)
+ y.tab.c y.tab.h: rules.y
+ 	$(YACC) -d rules.y
