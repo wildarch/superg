@@ -7,7 +7,7 @@ It provides:
 * A simple LISP-like frontend.
 
 I hope to expand this README at some point. 
-For now please refer to the report under `doc/paper.tex`. 
+For now please refer to the report under `doc/paper.pdf`. 
 
 ## Building
 To build this crate, [install a Rust toolchain](https://rustup.rs) and run:
